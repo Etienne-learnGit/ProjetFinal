@@ -77,7 +77,7 @@ class boatIHM(QWidget):
     """
     Lorsque l'utilisateur press le boutton permettant de changer la masse, c'est cette methode qui intervient.
     Elle remplace l'ancienne masse par la nouvelle dans l'attribut self.mass de la classe IHM.
-    Puis elle fait appel à la fonction réinit() pour effacer les données affichés correspondant au modele précédent.
+    Puis elle fait appel à la fonction réinit() pour effacer les données affichées correspondantes au modele précédent.
     """
     def changerMasse(self):
         txt = self.zoneTexte.toPlainText()
@@ -89,9 +89,9 @@ class boatIHM(QWidget):
         self.reinit()
 
     """
-    Lorsque l'utilisateur press le boutton permettant de changer de modele, c'est cette methode qui intervient.
+    Lorsque l'utilisateur press le boutton permettant de changer de modèle, c'est cette methode qui intervient.
     Elle remplace le chemin du fichier stl précédent et le remplace par un autre.
-    Puis elle fait appel à la fonction réinit() pour effacer les données affichés correspondant au modele précédent.
+    Puis elle fait appel à la fonction réinit() pour effacer les données affichées correspondantes au modele précédent.
     """
     def changerModele(self):
             chemins = ['Maillage\Rectangular_HULL_Normals_Outward.stl', "Maillage\V_HULL_Normals_Outward.stl", "Maillage\Cylindrical_HULL_Normals_Outward.stl", "Maillage\Mini650_HULL_Normals_Outward.stl"]

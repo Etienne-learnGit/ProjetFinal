@@ -70,7 +70,7 @@ class operationsSurListes:
     """
     La méthode calculForcePression prend en argument les coordonnées des points d'une facette
     et les coordonnees de sa normale.
-    ! Attention ! Cette methode ne calcule pas toute les forces de pressions en une seule fois, 
+    ! Attention ! Cette methode ne calcule pas toutes les forces de pressions en une seule fois, 
     elle retourne la force de pression correspondant à la facette en argument 
     """
     def calculForcePression(self, N, F):

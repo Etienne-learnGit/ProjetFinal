@@ -35,7 +35,7 @@ newlstFacettesR = translationDesFacette(-0.5, lstFacettesR)
 
 """
 On réalise le test de la poussée d'Archimede sur les facettes du rectangle
-On commence par translater toute les facettes de "-0.5" car le rectangle fait "1m" en hauteur
+On commence par translater toutes les facettes de "-0.5" car le rectangle fait "1m" en hauteur
 On l'imerge de moitier 
 
 On calcule la poussee d'Archimede avec la liste translatée,
