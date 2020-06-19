@@ -1,11 +1,5 @@
 import numpy
 
-"""
-Cette classe nous permet d'extraire les donnees du fichier STL.
-On récupère ces donnees sous forme de liste.
-Une liste avec les coordonnées des 3 points de chaque facette 
-et une seconde liste avec les coordonnees des vecteurs normaux de chaque facette
-"""
 class extractionSTL:
     def __init__(self, chemin):
         self.__cheminSTL = chemin
@@ -40,15 +34,6 @@ class extractionSTL:
         self.__listeFacette.append(Vertex3)
         return
 
-"""
-Cette classe permet de creer un objet "bateau" qui prend comme argument sa masse,
-la liste des ses facettes et la liste de ses normales.
-Les methodes (au nombre de 4) de cette classe permettent d'effectuer le calcul
-des forces de pression des facettes imergees (1), de poussee d'Archimede (2).
-Elles permettent aussi de réaliser une translation (3) de la structure choisie et 
-de calculer le tirant d'eau correspondant à l'équilibre statique de la structure.
-L'equilibre statique est déterminer grace à un algorithme de dicotomie. (4)
-"""
 class operationsSurListes:
     def __init__(self, masse, lstN, lstF):
         self.__masse = masse
@@ -67,12 +52,6 @@ class operationsSurListes:
         self.__masse = masse
         self.__FP = masse * 9.81
 
-    """
-    La méthode calculForcePression prend en argument les coordonnées des points d'une facette
-    et les coordonnees de sa normale.
-    ! Attention ! Cette methode ne calcule pas toute les forces de pressions en une seule fois, 
-    elle retourne la force de pression correspondant à la facette en argument 
-    """
     def calculForcePression(self, N, F):
         rho = 1025
         g = 9.81
@@ -85,13 +64,6 @@ class operationsSurListes:
         FPression = -rho*g*dS*normale*abs(coordG[2])
         return FPression
 
-    """
-    Cette methode retourne la poussee d'Archimede de la structure.
-    Elle permet de sommer les forces de pressions des facettes (! celles des facettes immergees uniquement !)
-    Pour se faire, elle regarde si la coordonné "z" du point G de chaque facette est au dessus du niveau 0 (défini comme la surface de l'eau).
-    Si c'est le cas, pouuseeArchimede() appelle calculForcePression() pour la facette immergee, 
-    puis elle somme la force de pression obtenue avec la poussee d'Archimede.
-    """
     def pousseeArchimede(self):
         self.__FA = [0,0,0]
         for i in range(0, len(self.__lstF)):
@@ -102,11 +74,6 @@ class operationsSurListes:
                 self.__FA[2] = self.__FA[2] + self.calculForcePression(self.__lstN[i], self.__lstF[i])[2]
         return numpy.vdot(self.__FA,self.__FA)**(1/2)
 
-    """
-    La méthode translationDesFacettes() permet de réaliser une translation sur la totalité
-    des facettes de notre structure. Elle ajoute la valeur de translation a toutes les coordonnées des
-    points de chaque facette.
-    """
     def translationDesFacette(self, valeurDeTranslation):
         x = valeurDeTranslation
         for elt in range(0, len(self.__lstF)) :
@@ -115,11 +82,6 @@ class operationsSurListes:
         self.__tirantEau -= x
         return self.__lstF
 
-    """
-    La methode dicotomie permet de récuperer le tirant d'eau à l'équilibre statique.
-    Pour se faire, elle utilise les methode de translation et de calcul de poussee d'Archimede.
-    La dicotomie ne s'arrete qu'au moment ou la poussée d'Archimede est égale au poids à epsilon pret.
-    """
     def dichotomie(self,hauteurInitial):
         hauteurMaximal = 2
         precision = 10**(-3)
@@ -130,6 +92,8 @@ class operationsSurListes:
         lst1=[]
         while ecart > precision:
             m = (debut+fin)/2
+            print(">> iteration num ",n)
+            print("a,m,b",debut,m,fin)
             self.translationDesFacette(-debut)
             archiDebut = self.pousseeArchimede() - self.__FP
             self.translationDesFacette(debut)
@@ -147,3 +111,16 @@ class operationsSurListes:
         lst = [lst1,round(m,3),n]
         return lst
 
+"""
+La dicotomie se sert des autres methodes de la classe,
+par consequent notre test se réalise sur la totalité de la classe.
+
+On réalise le test sur un bateau de forme rectanulaire et avec une masse de 4000 Kg
+"""
+
+b1 = extractionSTL('Maillage\Rectangular_HULL_Normals_Outward.stl')
+lstN , lstF = b1.extractionDesListes()
+
+boat = operationsSurListes(4000, lstN, lstF)
+tirant = boat.dichotomie(0.1)
+print("Le tirant d'eau final est de : ", tirant[1], "m")

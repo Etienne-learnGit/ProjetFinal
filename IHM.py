@@ -30,7 +30,6 @@ class boatIHM(QWidget):
         self.boutton1 = QPushButton("Start stabilization")
         self.boutton2 = QPushButton("Change model")
 
-
         self.textA = QLabel("\tChoose a new boat mass")
         self.zoneTexte = QTextEdit("")
         self.zoneTexte.setMaximumSize(260, 30)
@@ -75,6 +74,11 @@ class boatIHM(QWidget):
 
         self.setLayout(self.LayoutF)
 
+    """
+    Lorsque l'utilisateur press le boutton permettant de changer la masse, c'est cette methode qui intervient.
+    Elle remplace l'ancienne masse par la nouvelle dans l'attribut self.mass de la classe IHM.
+    Puis elle fait appel à la fonction réinit() pour effacer les données affichés correspondant au modele précédent.
+    """
     def changerMasse(self):
         txt = self.zoneTexte.toPlainText()
         print(txt)
@@ -84,6 +88,11 @@ class boatIHM(QWidget):
         self.zoneTexte.setText("")
         self.reinit()
 
+    """
+    Lorsque l'utilisateur press le boutton permettant de changer de modele, c'est cette methode qui intervient.
+    Elle remplace le chemin du fichier stl précédent et le remplace par un autre.
+    Puis elle fait appel à la fonction réinit() pour effacer les données affichés correspondant au modele précédent.
+    """
     def changerModele(self):
             chemins = ['Maillage\Rectangular_HULL_Normals_Outward.stl', "Maillage\V_HULL_Normals_Outward.stl", "Maillage\Cylindrical_HULL_Normals_Outward.stl", "Maillage\Mini650_HULL_Normals_Outward.stl"]
             self.counter +=1
@@ -95,6 +104,10 @@ class boatIHM(QWidget):
                 self.counter = -1
             self.reinit()
 
+    """
+    La methode reinit() permet de réinitialier la courbe des tirants d'eau et des données lors du changement de la masse
+    ou d'un changement de modele 3D.
+    """
     def reinit(self):
         self.B = extractionSTL(self.stl)
         self.L1, self.L2 = self.B.extractionDesListes()
@@ -106,23 +119,24 @@ class boatIHM(QWidget):
         self.courbe = courbe([])
         self.LayoutV3.addWidget(self.courbe)
 
+    """
+    Cette méthode lance la dicotomie et le tracé de la courbe du tirant d'eau.
+    Elle fait appel a la class courbe() pour initialiser la courbe des tirants d'eau.
+    """
     def demarrerStabilisation(self):
         listeTirant = self.bateau.dichotomie(0.1)
         Archimede = self.bateau.getFA()
         self.info5.setText(str(Archimede))
         self.info2.setText(str(listeTirant[-2]))
-
-        #self.courbe.ax.clear()
-        #self.courbe = courbe(listeTirant)
-        #self.courbe.canvas.draw()
-        #self.courbe.affichageCourbe(listeTirant)
-
         self.courbe.canvas.deleteLater()
         self.courbe = courbe(listeTirant)
         self.LayoutV3.addWidget(self.courbe)
 
-        #self.courbe.canvas.plot()
-
+"""
+Cette class permet de créer un objet graph, qui correspond à la représentation 3D de la structure étudiée.
+Cette objet est un widget, et il peut etre ajouté à la fenetre principal.
+La méthode qui trace le graph fait appel à une fonctionnalitée de matplot capable de lire les fichiers stl.
+"""
 class graph(QWidget):
     def __init__(self, chemin):
         QWidget.__init__(self)
@@ -141,11 +155,17 @@ class graph(QWidget):
         scale = your_mesh.points.flatten("C")
         self.ax.auto_scale_xyz(scale, scale, scale)
 
+"""
+Cette class permet de créer un objet courbe, qui correspond à l'évolution du 
+tirant d'eau. Cette objet est un widget, et il peut etre ajouté à la fenetre principal.
+La courbe est tracée grace aux données récupérées dans la liste en argument.
+"""
 class courbe(QWidget):
     def __init__(self,liste):
         QWidget.__init__(self)
         self.fig = plt2.figure()
         self.canvas = FigureCanvas(self.fig)
+
         self.affichageCourbe(liste)
         #self.canvas.draw()
         layout = QVBoxLayout()
